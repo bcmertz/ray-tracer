@@ -2,25 +2,15 @@ package vector
 
 import (
 	"math"
+
+	"ray-tracer/color"
 )
 
 type Vector struct {
 	X     float64
 	Y     float64
 	Z     float64
-	Color [3]float64
-}
-
-func (v1 Vector) R() float64 {
-	return v1.Color[0]
-}
-
-func (v1 Vector) G() float64 {
-	return v1.Color[1]
-}
-
-func (v1 Vector) B() float64 {
-	return v1.Color[2]
+	Color color.Color
 }
 
 func (v1 Vector) Equals(v2 Vector) (equals bool) {
