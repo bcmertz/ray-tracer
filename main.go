@@ -51,9 +51,9 @@ func main() {
 				Direction: lower_left.Add(horiz.ScalarMultiply(u)).Add(vert.ScalarMultiply(v)),
 			}
 			c := colorGradient(r)
-			var ir int = int(256 * c.R)
-			var ig int = int(256 * c.G)
-			var ib int = int(256 * c.B)
+			var ir int = int(255 * c.R)
+			var ig int = int(255 * c.G)
+			var ib int = int(255 * c.B)
 			_, err := f.WriteString(fmt.Sprintf("%v %v %v\n", ir, ig, ib))
 			if err != nil {
 				fmt.Println(err)
