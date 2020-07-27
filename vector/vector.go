@@ -74,7 +74,7 @@ func (v1 Vector) Distance(v2 Vector) float64 {
 	return v2.Subtract(v1).Length()
 }
 
-func (v1 Vector) Normalize(v2 Vector) Vector {
+func (v1 Vector) Normalize() Vector {
 	length := v1.Length()
 	return Vector{
 		X: v1.X / length,
