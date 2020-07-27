@@ -44,6 +44,7 @@ func main() {
 	const ny = 100.0
 	for j := ny - 1; j >= 0; j-- {
 		for i := 0.0; i < nx; i++ {
+			fmt.Printf("\rOn image line %v", j)
 			u := float64(i / nx)
 			v := float64(j / ny)
 			r := ray.Ray{
