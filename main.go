@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 
 	"ray-tracer/color"
+	"ray-tracer/intersection"
 	"ray-tracer/ray"
 	"ray-tracer/vector"
 )
@@ -71,8 +73,47 @@ func main() {
 	}
 }
 
-// create linear gradient of blue and white
+// calculate if ray hits sphere and return -1 if no
+func hitSphere(center vector.Vector, radius float64, ray ray.Ray) intersection.IntersectionPoint {
+	var centerToOrigin vector.Vector = ray.Origin.Subtract(center)
+	var a float64 = ray.Direction.Dot(ray.Direction)
+	var b float64 = 2.0 * centerToOrigin.Dot(ray.Direction)
+	var c float64 = centerToOrigin.Dot(centerToOrigin) - radius*radius
+	discriminant := b*b - 4*a*c
+	position := ray.PointAtParameter(-b - math.Sqrt(discriminant)/(2.0*a))
+	var normal vector.Vector = position.Subtract(center).Normalize()
+	var isHit bool
+	if discriminant < 0 {
+		isHit = false
+	} else {
+		isHit = true
+	}
+	return intersection.IntersectionPoint{
+		IsHit:    isHit,
+		Normal:   normal,
+		Position: position,
+	}
+}
+
+// create linear gradient of blue and white and see if we hit sphere
 func colorGradient(r ray.Ray) color.Color {
+	center := vector.Vector{
+		X: 0.0,
+		Y: 0.0,
+		Z: -1.0,
+	}
+	radius := 0.5
+	trace := hitSphere(center, radius, r)
+	if trace.IsHit {
+		normal := trace.Normal
+		shade := color.Color{
+			R: normal.X + 1,
+			G: normal.Y + 1,
+			B: normal.Z + 1,
+		}
+		return shade.ScalarMultiply(0.5)
+	}
+
 	var direction vector.Vector = r.Direction
 	t := 0.5 * (direction.Y + 1)
 
