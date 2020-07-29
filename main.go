@@ -43,9 +43,6 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	// define dimensions of the image
-	const lines_x = 200.0
-	const lines_y = 100.0
 	// setup scene
 	sphere1 := shapes.Sphere{
 		Center: vector.Vector{
@@ -57,15 +54,18 @@ func main() {
 	}
 	sphere2 := shapes.Sphere{
 		Center: vector.Vector{
-			X: 2.0,
-			Y: 1.0,
-			Z: -3.0,
+			X: 0.0,
+			Y: -101,
+			Z: -1.0,
 		},
-		Radius: 0.25,
+		Radius: 100,
 	}
 	scene := scene.Scene{
 		Geometry: []shapes.Shape{sphere1, sphere2},
 	}
+	// define dimensions of the image
+	const lines_x = 200.0
+	const lines_y = 100.0
 	// iterate through the image pixels
 	for y := lines_y - 1; y >= 0; y-- {
 		for x := 0.0; x < lines_x; x++ {
