@@ -8,4 +8,5 @@ type IntersectionPoint struct {
 	IsHit    bool
 	Position vector.Vector
 	Normal   vector.Vector
+	Distance float64
 }
