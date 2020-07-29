@@ -1,5 +1,5 @@
 run: clean build
-	./ray-tracer && feh test.ppm
+	./ray-tracer && feh -Z test.ppm
 build:
 	go build -o ray-tracer
 clean:
