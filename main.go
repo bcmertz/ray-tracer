@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"ray-tracer/color"
+	"ray-tracer/light"
 	"ray-tracer/ray"
 	"ray-tracer/scene"
 	"ray-tracer/shapes"
@@ -61,13 +62,27 @@ func main() {
 	sphere2 := shapes.Sphere{
 		Center: vector.Vector{
 			X: 0.0,
-			Y: -101,
+			Y: -101.0,
 			Z: -1.0,
 		},
 		Radius: 100,
 	}
+	light1 := light.Light{
+		Position: vector.Vector{
+			X: -1.0,
+			Y: 200.0,
+			Z: -1.0,
+		},
+		Power: color.Color{
+			R: 0.0,
+			G: 0.0,
+			B: 10.0,
+		},
+		Attenuation: vector.Vector{X: 0.0, Y: 0.0, Z: 1},
+	}
 	scene := scene.Scene{
 		Geometry: []shapes.Shape{sphere1, sphere2},
+		Lights:   []light.Light{light1},
 	}
 	// iterate through the image pixels
 	for y := lines_y - 1; y >= 0; y-- {
