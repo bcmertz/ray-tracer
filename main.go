@@ -12,6 +12,9 @@ import (
 )
 
 // coordinate grid dimensions, pixes are mapped onto this grid we define
+// relative size of orthogonal vector lengths changes scaling / stretch of image
+// if lines_x = 200 lines_y = 200 then X/Y vectors should be equal magnitude instead
+// of 2:1 as is currently used for lines_x = 400 lines_y = 200
 var lower_left = vector.Vector{
 	X: -2.0,
 	Y: -1.0,
@@ -39,7 +42,10 @@ func main() {
 		fmt.Println(err)
 	}
 	defer f.Close()
-	err = writePPMHeader(f)
+	// define dimensions of the image
+	const lines_x = 400.0
+	const lines_y = 200.0
+	err = writePPMHeader(f, lines_x, lines_y)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -63,9 +69,6 @@ func main() {
 	scene := scene.Scene{
 		Geometry: []shapes.Shape{sphere1, sphere2},
 	}
-	// define dimensions of the image
-	const lines_x = 200.0
-	const lines_y = 100.0
 	// iterate through the image pixels
 	for y := lines_y - 1; y >= 0; y-- {
 		for x := 0.0; x < lines_x; x++ {
@@ -129,10 +132,8 @@ func renderBackground(direction vector.Vector) color.Color {
 }
 
 // write ppm file header
-func writePPMHeader(f *os.File) error {
+func writePPMHeader(f *os.File, rows, columns float64) error {
 	const color_type = "P3"
-	const rows = 200
-	const columns = 100
 	const max_color = 255
 	_, err := f.WriteString(fmt.Sprintf("%s\n%v %v\n%v\n", color_type, rows, columns, max_color))
 	return err
