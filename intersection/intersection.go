@@ -1,6 +1,7 @@
 package intersection
 
 import (
+	"ray-tracer/material"
 	"ray-tracer/vector"
 )
 
@@ -9,4 +10,5 @@ type IntersectionPoint struct {
 	Position vector.Vector
 	Normal   vector.Vector
 	Distance float64
+	Material material.Material
 }
