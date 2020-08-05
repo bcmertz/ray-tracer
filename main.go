@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 
 	"ray-tracer/color"
@@ -84,24 +85,32 @@ func main() {
 		Geometry: []shapes.Shape{sphere1, sphere2},
 		Lights:   []light.Light{light1},
 	}
+	samples_per_pixel := 20
 	// iterate through the image pixels
 	for y := lines_y - 1; y >= 0; y-- {
 		for x := 0.0; x < lines_x; x++ {
 			// sanity check
 			fmt.Printf("\rAt image coordinate %v %v", x, y)
-			// scale pixel number to x,y grid size
-			x_coord := horiz.ScalarMultiply(float64(x / lines_x))
-			y_coord := vert.ScalarMultiply(float64(y / lines_y))
-			// define the begining point of the ray and the direction vector into the image (from the camera)
-			r := ray.Ray{
-				Origin:    origin,
-				Direction: lower_left.Add(x_coord).Add(y_coord), // from lower left hand side of the screen move up y_coord and right x_coord
+			var color color.Color
+			for s := 0; s < samples_per_pixel; s++ {
+				// scale pixel number to x,y grid size
+				// also add in antialiasing w random offset sampling
+				x_coord := horiz.ScalarMultiply(float64((x + rand.Float64()) / lines_x))
+				y_coord := vert.ScalarMultiply(float64((y + rand.Float64()) / lines_y))
+				// define the begining point of the ray and the direction vector into the image (from the camera)
+				r := ray.Ray{
+					Origin:    origin,
+					Direction: lower_left.Add(x_coord).Add(y_coord), // from lower left hand side of the screen move up y_coord and right x_coord
+				}
+				c := trace(scene, r)
+				color = color.Add(c)
 			}
-			c := trace(scene, r)
+			// average out color from all samples
+			color = color.ScalarDivide(float64(samples_per_pixel))
 			// convert rgb colors to 255 values from unit color values
-			var ir int = int(255 * c.R)
-			var ig int = int(255 * c.G)
-			var ib int = int(255 * c.B)
+			var ir int = int(255 * color.R)
+			var ig int = int(255 * color.G)
+			var ib int = int(255 * color.B)
 			// write out the pixel value
 			_, err := f.WriteString(fmt.Sprintf("%v %v %v\n", ir, ig, ib))
 			if err != nil {
