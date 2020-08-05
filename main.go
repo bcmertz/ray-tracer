@@ -121,16 +121,32 @@ func main() {
 }
 
 // see if we hit any objects, if not render background
+// see if we hit any objects, if not return background if yes return color of the shape (TODO)
 func trace(scene scene.Scene, r ray.Ray) color.Color {
-	trace := scene.Intersect(r)
-	if trace.IsHit {
-		normal := trace.Normal
+	intersectionPoint := scene.Intersect(r)
+	if intersectionPoint.IsHit {
+		normal := intersectionPoint.Normal
 		shade := color.Color{
 			R: normal.X + 1,
 			G: normal.Y + 1,
 			B: normal.Z + 1,
 		}
+
+		// do lighting
+		// for _, light := range scene.Lights {
+		// 	directionToLight := light.Position.Subtract(intersectionPoint.Position).Normalize()
+		// 	shadowRay := ray.Ray{
+		// 		Origin:    intersectionPoint.Position.Add(directionToLight).ScalarMultiply(0.00001),
+		// 		Direction: directionToLight,
+		// 	}
+		// 	shadowIp := scene.Intersect(shadowRay)
+		// 	if ((!shadowIp.IsHit || (shadowIp.distance > scene.lights[i].distance(ip.position))) && (directionToLight.dot(ip.normal) > 0)) {
+		// 		let intensity = scene.lights[i].intensityAt(ip.position);
+		// 		color = color.add(intensity.colorMultiply(ip.material.diffuseAlbedo.scalarMultiply(ip.normal.dot(directionToLight))));
+		// 	}
+		// }
 		return shade.ScalarMultiply(0.5)
+
 	} else {
 		return renderBackground(r.Direction)
 	}
