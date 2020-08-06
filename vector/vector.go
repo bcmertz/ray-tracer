@@ -53,6 +53,7 @@ func (v1 Vector) ScalarDivide(s float64) Vector {
 	return v
 }
 
+// Dot product v1 v2 shows how non-orthogonal the vectors are
 func (v1 Vector) Dot(v2 Vector) float64 {
 	return ((v1.X * v2.X) + (v1.Y * v2.Y) + (v1.Z * v2.Z))
 }
@@ -66,14 +67,17 @@ func (v1 Vector) Cross(v2 Vector) Vector {
 	return v
 }
 
+// Length of vector (v1 * v1)^(1/2)
 func (v1 Vector) Length() float64 {
 	return math.Sqrt(v1.Dot(v1))
 }
 
+// Distance between v1 and v2
 func (v1 Vector) Distance(v2 Vector) float64 {
 	return v2.Subtract(v1).Length()
 }
 
+// Length 1 vector whatever direction it was pointing prior to normalization
 func (v1 Vector) Normalize() Vector {
 	length := v1.Length()
 	return Vector{
