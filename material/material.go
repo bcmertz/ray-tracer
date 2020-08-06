@@ -1,5 +1,11 @@
 package material
 
+import (
+	"ray-tracer/color"
+)
+
 type Material struct {
-	Specular bool
+	DiffuseAlbedo  color.Color
+	SpecularAlbedo color.Color
+	Specular       bool
 }

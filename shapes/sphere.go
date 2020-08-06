@@ -3,13 +3,15 @@ package shapes
 import (
 	"math"
 	"ray-tracer/intersection"
+	"ray-tracer/material"
 	"ray-tracer/ray"
 	"ray-tracer/vector"
 )
 
 type Sphere struct {
-	Center vector.Vector
-	Radius float64
+	Center   vector.Vector
+	Radius   float64
+	Material material.Material
 }
 
 func (sphere Sphere) Intersect(ray ray.Ray) intersection.IntersectionPoint {
@@ -32,5 +34,6 @@ func (sphere Sphere) Intersect(ray ray.Ray) intersection.IntersectionPoint {
 		Normal:   normal,
 		Position: position,
 		Distance: distance,
+		Material: sphere.Material,
 	}
 }

@@ -7,6 +7,7 @@ import (
 
 	"ray-tracer/color"
 	"ray-tracer/light"
+	"ray-tracer/material"
 	"ray-tracer/ray"
 	"ray-tracer/scene"
 	"ray-tracer/shapes"
@@ -52,21 +53,61 @@ func main() {
 		fmt.Println(err)
 	}
 	// setup scene
+	red := material.Material{
+		DiffuseAlbedo: color.Color{
+			R: 1.0,
+			G: 0.0,
+			B: 0.0,
+		},
+		Specular: false,
+	}
+	white := material.Material{
+		DiffuseAlbedo: color.Color{
+			R: 0.8,
+			G: 0.8,
+			B: 0.8,
+		},
+		SpecularAlbedo: color.Color{
+			R: 0.2,
+			G: 0.2,
+			B: 0.2,
+		},
+		Specular: true,
+	}
+	blue := material.Material{
+		DiffuseAlbedo: color.Color{
+			R: 0.0,
+			G: 0.0,
+			B: 1.0,
+		},
+		Specular: false,
+	}
 	sphere1 := shapes.Sphere{
 		Center: vector.Vector{
 			X: 0.0,
 			Y: 0.0,
-			Z: -1.0,
+			Z: -2.0,
 		},
-		Radius: 0.5,
+		Radius:   0.5,
+		Material: red,
 	}
 	sphere2 := shapes.Sphere{
 		Center: vector.Vector{
+			X: 2.0,
+			Y: 1.5,
+			Z: -2.0,
+		},
+		Radius:   0.5,
+		Material: white,
+	}
+	sphere3 := shapes.Sphere{
+		Center: vector.Vector{
 			X: 0.0,
-			Y: -101.0,
+			Y: -0.4,
 			Z: -1.0,
 		},
-		Radius: 100,
+		Radius:   0.4,
+		Material: blue,
 	}
 	light1 := light.Light{
 		Position: vector.Vector{
@@ -82,7 +123,7 @@ func main() {
 		Attenuation: vector.Vector{X: 0.0, Y: 0.0, Z: 1},
 	}
 	scene := scene.Scene{
-		Geometry: []shapes.Shape{sphere1, sphere2},
+		Geometry: []shapes.Shape{sphere1, sphere2, sphere3},
 		Lights:   []light.Light{light1},
 	}
 	samples_per_pixel := 20
@@ -120,33 +161,31 @@ func main() {
 	}
 }
 
-// see if we hit any objects, if not render background
-// see if we hit any objects, if not return background if yes return color of the shape (TODO)
+// see if we hit any objects, if not return background if yes return color of the shape
 func trace(scene scene.Scene, r ray.Ray) color.Color {
+	col := color.Color{
+		R: 0,
+		G: 0,
+		B: 0,
+	}
 	intersectionPoint := scene.Intersect(r)
 	if intersectionPoint.IsHit {
-		normal := intersectionPoint.Normal
-		shade := color.Color{
-			R: normal.X + 1,
-			G: normal.Y + 1,
-			B: normal.Z + 1,
-		}
-
+		col = intersectionPoint.Material.DiffuseAlbedo
 		// do lighting
-		// for _, light := range scene.Lights {
+		//for _, light := range scene.Lights {
 		// 	directionToLight := light.Position.Subtract(intersectionPoint.Position).Normalize()
 		// 	shadowRay := ray.Ray{
 		// 		Origin:    intersectionPoint.Position.Add(directionToLight).ScalarMultiply(0.00001),
 		// 		Direction: directionToLight,
 		// 	}
 		// 	shadowIp := scene.Intersect(shadowRay)
-		// 	if ((!shadowIp.IsHit || (shadowIp.distance > scene.lights[i].distance(ip.position))) && (directionToLight.dot(ip.normal) > 0)) {
-		// 		let intensity = scene.lights[i].intensityAt(ip.position);
-		// 		color = color.add(intensity.colorMultiply(ip.material.diffuseAlbedo.scalarMultiply(ip.normal.dot(directionToLight))));
+		// 	if (!shadowIp.IsHit || (shadowIp.Distance > light.Distance(intersectionPoint.Position))) && directionToLight.Dot(intersectionPoint.Normal) > 0 {
+		// 		intensity := light.IntensityAt(intersectionPoint.Position)
+		// 		col = col.Add(intensity.ColorMultiply(intersectionPoint.Material.DiffuseAlbedo.ScalarMultiply(intersectionPoint.Normal.Dot(directionToLight))))
 		// 	}
 		// }
-		return shade.ScalarMultiply(0.5)
 
+		return col
 	} else {
 		return renderBackground(r.Direction)
 	}
